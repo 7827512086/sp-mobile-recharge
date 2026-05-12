@@ -1,0 +1,27 @@
+{
+  "overview": "SP Mobile Recharge App is a full-service digital payments platform for mobile recharge, money transfer, bill payment, and digital deposits — with a complete admin panel for user management, transaction reports, and app settings.",
+  "features": [
+    "Mobile recharge for Jio, Airtel, Vi, BSNL with plan browsing",
+    "DTH recharge for Tata Sky and Dish TV",
+    "Wallet top-up and real-time balance tracking",
+    "Money transfer between registered users",
+    "Bill payment for electricity, water, gas, and internet",
+    "Fixed-term digital deposits with interest (4-10%)",
+    "Full transaction history with type-based filtering",
+    "Admin dashboard with analytics and plan management",
+    "Admin transaction reports with advanced filtering",
+    "Admin settings for commissions, service toggles, and branding"
+  ],
+  "category": "fintech",
+  "tags": [
+    "recharge",
+    "payments",
+    "wallet",
+    "fintech",
+    "admin",
+    "bill-payment",
+    "money-transfer",
+    "deposits"
+  ],
+  "last_updated": "2026-05-12T05:58:50.922Z"
+}

@@ -1,0 +1,190 @@
+// Version: 3.0.0
+type AppSettings__416535824 =
+  {
+    appDisplayName : Text;
+    commissionRateBps : Nat;
+    enableBillPayment : Bool;
+    enableDigitalDeposit : Bool;
+    enableDthRecharge : Bool;
+    enableMobileRecharge : Bool;
+    enableMoneyTransfer : Bool
+  };
+type BillCategory__288582535 = {#electricity; #gas; #internet; #water};
+type BillId__191357134 = Nat;
+type BillRecord__913642361 =
+  {
+    amount : Nat;
+    billerId : Text;
+    category : BillCategory__288582535;
+    id : BillId__191357134;
+    status : BillStatus__791876087;
+    timestamp : Timestamp__437824445;
+    userId : UserId__872037542
+  };
+type BillStatus__791876087 = {#failed; #success};
+type DepositId__821206929 = Nat;
+type DepositRecord__982090819 =
+  {
+    durationDays : Nat;
+    id : DepositId__821206929;
+    interestEarned : Nat;
+    interestRate : Nat;
+    maturedAt : ?Timestamp__343174434;
+    maturityTime : Timestamp__343174434;
+    principal_ : Nat;
+    startTime : Timestamp__343174434;
+    status : DepositStatus__78226765;
+    userId : UserId__58228040
+  };
+type DepositStatus__78226765 = {#active; #matured; #withdrawn};
+type Int__270357528 = Int__616954475;
+type Int__616954475 = Int;
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type OldList__955980737<T> =
+  {var blockIndex : Nat; var blocks : [var [var ?T]]; var elementIndex : Nat};
+type OldState__853343916 = {var nextPlanId : Nat; var nextTxId : Nat};
+type Operator__968691126 = {#airtel; #bsnl; #dishTV; #jio; #tataSky; #vi};
+type PlanId__801010428 = PlanId__999688320;
+type PlanId__819794162 = Nat;
+type PlanId__999688320 = Nat;
+type PlanType__591553963 = {#dth; #mobile};
+type Plan__1050550357 =
+  {
+    description : Text;
+    id : PlanId__819794162;
+    var isActive : Bool;
+    name : Text;
+    operator : Operator__968691126;
+    planType : PlanType__591553963;
+    price : Nat;
+    validity : Nat
+  };
+type Time__796480547 = Int__270357528;
+type Time__900049286 = Time__796480547;
+type Timestamp__223287625 = Timestamp__301639476;
+type Timestamp__301639476 = Time__900049286;
+type Timestamp__343174434 = Timestamp__301639476;
+type Timestamp__437824445 = Timestamp__301639476;
+type Timestamp__600497786 = Timestamp__301639476;
+type Timestamp__883267106 = Timestamp__301639476;
+type TransactionId__138870153 = Nat;
+type TransactionId__486866050 = TransactionId__138870153;
+type TransactionStatus__628660341 = {#failed; #pending; #success};
+type Transaction__822992244 =
+  {
+    amount : Nat;
+    id : TransactionId__486866050;
+    operator : Operator__968691126;
+    planId : PlanId__801010428;
+    status : TransactionStatus__628660341;
+    targetNumber : Text;
+    timestamp : Timestamp__223287625;
+    userId : UserId__356286356
+  };
+type TransferId__90307748 = Nat;
+type TransferRecord__585097261 =
+  {
+    amount : Nat;
+    id : TransferId__90307748;
+    note : Text;
+    recipientId : UserId__646644599;
+    senderId : UserId__646644599;
+    status : TransferStatus__237674896;
+    timestamp : Timestamp__883267106
+  };
+type TransferStatus__237674896 = {#failed; #success};
+type UserId__158757552 = Principal;
+type UserId__356286356 = UserId__158757552;
+type UserId__58228040 = UserId__158757552;
+type UserId__646644599 = UserId__158757552;
+type UserId__74810557 = UserId__158757552;
+type UserId__872037542 = UserId__158757552;
+type UserProfile__733220132 =
+  {
+    createdAt : Timestamp__600497786;
+    id : UserId__74810557;
+    var isAdmin : Bool;
+    var walletBalance : Int
+  };
+actor ({
+  stable appSettings : {var settings : AppSettings__416535824};
+  in plans :
+    OldList__955980737<{
+                         description : Text;
+                         id : Nat;
+                         var isActive : Bool;
+                         name : Text;
+                         operator :
+                           {#airtel; #bsnl; #dishTV; #jio; #tataSky; #vi};
+                         planType : {#dth; #mobile};
+                         price : Nat;
+                         validity : Nat
+                       }>;
+  in state : OldState__853343916;
+  in transactions :
+    OldList__955980737<{
+                         amount : Nat;
+                         id : Nat;
+                         operator :
+                           {#airtel; #bsnl; #dishTV; #jio; #tataSky; #vi};
+                         planId : Nat;
+                         status : {#failed; #pending; #success};
+                         targetNumber : Text;
+                         timestamp : Int;
+                         userId : Principal
+                       }>;
+  in users :
+    OldList__955980737<{
+                         createdAt : Int;
+                         id : Principal;
+                         var isAdmin : Bool;
+                         var walletBalance : Int
+                       }>
+}, {
+  stable appSettings : {var settings : AppSettings__416535824};
+  stable bills :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?BillRecord__913642361]];
+      var elementIndex : Nat__490723111
+    };
+  stable deposits :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?DepositRecord__982090819]];
+      var elementIndex : Nat__490723111
+    };
+  stable plans :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Plan__1050550357]];
+      var elementIndex : Nat__490723111
+    };
+  stable state :
+    {
+      var nextBillId : Nat;
+      var nextDepositId : Nat;
+      var nextPlanId : Nat;
+      var nextTransferId : Nat;
+      var nextTxId : Nat
+    };
+  stable transactions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?Transaction__822992244]];
+      var elementIndex : Nat__490723111
+    };
+  stable transfers :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?TransferRecord__585097261]];
+      var elementIndex : Nat__490723111
+    };
+  stable users :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?UserProfile__733220132]];
+      var elementIndex : Nat__490723111
+    }
+});

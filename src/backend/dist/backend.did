@@ -1,0 +1,302 @@
+type UserProfileView = 
+ record {
+   createdAt: Timestamp;
+   id: UserId;
+   isAdmin: bool;
+   walletBalance: int;
+ };
+type UserId = principal;
+type UpdatePlanArgs = 
+ record {
+   description: text;
+   id: PlanId;
+   name: text;
+   price: nat;
+   validity: nat;
+ };
+type TxType = 
+ variant {
+   bill;
+   deposit;
+   recharge;
+   topUp;
+   transfer;
+ };
+type TxStatus = 
+ variant {
+   failed;
+   pending;
+   success;
+ };
+type TxRecord = 
+ record {
+   amount: nat;
+   extra: TxExtra;
+   id: nat;
+   status: TxStatus;
+   timestamp: Timestamp;
+   txType: TxType;
+   userId: UserId;
+ };
+type TxFilter = 
+ record {
+   dateFrom: opt Timestamp;
+   dateTo: opt Timestamp;
+   operator: opt Operator;
+   status: opt TxStatus;
+   txType: opt TxType;
+ };
+type TxExtra = 
+ variant {
+   bill: record {
+           billerId: text;
+           category: BillCategory;
+         };
+   deposit: record {
+              durationDays: nat;
+              interestRate: nat;
+            };
+   recharge: record {
+               operator: Operator;
+               planId: nat;
+               targetNumber: text;
+             };
+   topUp: record {};
+   transfer: record {
+               note: text;
+               recipientId: UserId;
+             };
+ };
+type TransferStatus = 
+ variant {
+   failed;
+   success;
+ };
+type TransferResult = 
+ variant {
+   err: text;
+   insufficientBalance;
+   ok: TransferRecord;
+   recipientNotFound;
+   senderNotFound;
+ };
+type TransferRecord = 
+ record {
+   amount: nat;
+   id: TransferId;
+   note: text;
+   recipientId: UserId;
+   senderId: UserId;
+   status: TransferStatus;
+   timestamp: Timestamp;
+ };
+type TransferId = nat;
+type TransactionStatus = 
+ variant {
+   failed;
+   pending;
+   success;
+ };
+type TransactionId = nat;
+type Transaction = 
+ record {
+   amount: nat;
+   id: TransactionId;
+   operator: Operator;
+   planId: PlanId;
+   status: TransactionStatus;
+   targetNumber: text;
+   timestamp: Timestamp;
+   userId: UserId;
+ };
+type TopUpResult = 
+ variant {
+   err: text;
+   ok: int;
+ };
+type Timestamp = int;
+type RechargeResult = 
+ variant {
+   err: text;
+   insufficientBalance;
+   ok: Transaction;
+   planInactive;
+   planNotFound;
+ };
+type PublicSettings = 
+ record {
+   appDisplayName: text;
+   enableBillPayment: bool;
+   enableDigitalDeposit: bool;
+   enableDthRecharge: bool;
+   enableMobileRecharge: bool;
+   enableMoneyTransfer: bool;
+ };
+type PlanView = 
+ record {
+   description: text;
+   id: PlanId;
+   isActive: bool;
+   name: text;
+   operator: Operator;
+   planType: PlanType;
+   price: nat;
+   validity: nat;
+ };
+type PlanType = 
+ variant {
+   dth;
+   mobile;
+ };
+type PlanId = nat;
+type OperatorRevenue = 
+ record {
+   operator: Operator;
+   totalCount: nat;
+   totalRevenue: nat;
+ };
+type Operator = 
+ variant {
+   airtel;
+   bsnl;
+   dishTV;
+   jio;
+   tataSky;
+   vi;
+ };
+type MatureResult = 
+ variant {
+   alreadyProcessed;
+   depositNotFound;
+   err: text;
+   notYetMatured;
+   ok: DepositRecord;
+ };
+type InitiateRechargeArgs = 
+ record {
+   planId: PlanId;
+   targetNumber: text;
+ };
+type DepositStatus = 
+ variant {
+   active;
+   matured;
+   withdrawn;
+ };
+type DepositResult = 
+ variant {
+   err: text;
+   insufficientBalance;
+   invalidDuration;
+   ok: DepositRecord;
+   userNotFound;
+ };
+type DepositRecord = 
+ record {
+   durationDays: nat;
+   id: DepositId;
+   interestEarned: nat;
+   interestRate: nat;
+   maturedAt: opt Timestamp;
+   maturityTime: Timestamp;
+   "principal": nat;
+   startTime: Timestamp;
+   status: DepositStatus;
+   userId: UserId;
+ };
+type DepositId = nat;
+type CreatePlanArgs = 
+ record {
+   description: text;
+   name: text;
+   operator: Operator;
+   planType: PlanType;
+   price: nat;
+   validity: nat;
+ };
+type BillStatus = 
+ variant {
+   failed;
+   success;
+ };
+type BillRecord = 
+ record {
+   amount: nat;
+   billerId: text;
+   category: BillCategory;
+   id: BillId;
+   status: BillStatus;
+   timestamp: Timestamp;
+   userId: UserId;
+ };
+type BillPayResult = 
+ variant {
+   err: text;
+   insufficientBalance;
+   ok: BillRecord;
+   userNotFound;
+ };
+type BillId = nat;
+type BillCategory = 
+ variant {
+   electricity;
+   gas;
+   internet;
+   water;
+ };
+type AppSettingsUpdate = 
+ record {
+   appDisplayName: opt text;
+   commissionRateBps: opt nat;
+   enableBillPayment: opt bool;
+   enableDigitalDeposit: opt bool;
+   enableDthRecharge: opt bool;
+   enableMobileRecharge: opt bool;
+   enableMoneyTransfer: opt bool;
+ };
+type AppSettings = 
+ record {
+   appDisplayName: text;
+   commissionRateBps: nat;
+   enableBillPayment: bool;
+   enableDigitalDeposit: bool;
+   enableDthRecharge: bool;
+   enableMobileRecharge: bool;
+   enableMoneyTransfer: bool;
+ };
+type Analytics = 
+ record {
+   byOperator: vec OperatorRevenue;
+   totalCount: nat;
+   totalRevenue: nat;
+ };
+service : {
+  adminCreatePlan: (args: CreatePlanArgs) -> (PlanView);
+  adminGetAllTransactions: () -> (vec Transaction) query;
+  adminGetAllTransactionsV2: (filter: TxFilter) -> (vec TxRecord) query;
+  adminGetAnalytics: () -> (Analytics) query;
+  adminGetSettings: () -> (AppSettings) query;
+  adminListUsers: () -> (vec UserProfileView) query;
+  adminSetRole: (target: UserId, isAdmin: bool) -> (bool);
+  adminTogglePlan: (id: PlanId) -> (opt PlanView);
+  adminUpdatePlan: (args: UpdatePlanArgs) -> (opt PlanView);
+  adminUpdateSettings: (update: AppSettingsUpdate) -> ();
+  createDeposit: (amount: nat, durationDays: nat) -> (DepositResult);
+  getActivePlans: (planType: opt PlanType) -> (vec PlanView) query;
+  getBalance: () -> (int) query;
+  getMyBillPayments: () -> (vec BillRecord) query;
+  getMyDeposits: () -> (vec DepositRecord) query;
+  getMyTransactions: () -> (vec Transaction) query;
+  getPlan: (id: PlanId) -> (opt PlanView) query;
+  getProfile: () -> (opt UserProfileView) query;
+  getPublicSettings: () -> (PublicSettings) query;
+  getTransferHistory: () -> (vec TransferRecord) query;
+  initiateRecharge: (args: InitiateRechargeArgs) -> (RechargeResult);
+  matureDeposit: (depositId: nat) -> (MatureResult);
+  payBill: (category: BillCategory, billerId: text, amount: nat) ->
+   (BillPayResult);
+  register: () -> (UserProfileView);
+  topUpWallet: (amountPaisa: nat) -> (TopUpResult);
+  transferFunds: (recipientPrincipal: principal, amount: nat, note: text) ->
+   (TransferResult);
+}
